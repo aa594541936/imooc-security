@@ -19,6 +19,7 @@
             <version>${imooc.security.version}</version>
         </dependency>
 
+        <!--用于编写测试用例-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -30,5 +31,25 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <!-- 打包用的插件 -->
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.3.3.RELEASE</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <!-- 生成的jar的名字 -->
+        <finalName>demo</finalName>
+    </build>
 
 </project>
