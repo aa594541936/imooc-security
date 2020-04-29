@@ -27,6 +27,7 @@ public class UserControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
+    // 模拟查询用户的get请求
     @Test
     public void whenQuerySuccess() throws Exception {
         /* 模拟发出一个get请求，请求的路径为/user。
@@ -48,6 +49,24 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(3));
+    }
+
+
+    // 模拟获取用户详情信息的get请求
+    @Test
+    public void whenGenInfoSuccess() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("tom"));
+    }
+
+    // 模拟获取用户详情信息失败的情况
+    @Test
+    public void whenGenInfoFail() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/a")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
 }

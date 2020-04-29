@@ -6,10 +6,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +42,16 @@ public class UserController {
         users.add(new User());
         users.add(new User());
         return users;
+    }
+
+
+    // \\d+：只接收数字
+    @RequestMapping(value = "/user/{id:\\d+}", method = RequestMethod.GET)
+    public User getInfo(@PathVariable(name = "id") String id1) {
+        System.out.println("id1：" + id1);
+        User user = new User();
+        user.setUsername("tom");
+        return user;
     }
 
 }
