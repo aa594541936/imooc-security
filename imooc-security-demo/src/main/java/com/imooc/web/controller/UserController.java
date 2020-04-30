@@ -1,5 +1,6 @@
 package com.imooc.web.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.imooc.dto.User;
 import com.imooc.dto.UserQueryCondition;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
 
@@ -27,7 +29,8 @@ public class UserController {
 
     // @PageableDefault(page = 2, size = 17, sort = "username,asc") 如果前台没传值过来，则这就是默认值
     // Pageable是SpringData里的东西
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @GetMapping
+    @JsonView(User.UserSimpleView.class) // 3.在Controller方法上指定视图
     public List<User> query(UserQueryCondition condition, @PageableDefault(page = 2, size = 17, sort = "username,asc") Pageable pageable) {
 
         // 反射的toString的工具类
@@ -41,12 +44,14 @@ public class UserController {
         users.add(new User());
         users.add(new User());
         users.add(new User());
+
         return users;
     }
 
 
     // \\d+：只接收数字
-    @RequestMapping(value = "/user/{id:\\d+}", method = RequestMethod.GET)
+    @GetMapping("/{id:\\d+}")
+    @JsonView(User.UserDetailView.class)
     public User getInfo(@PathVariable(name = "id") String id1) {
         System.out.println("id1：" + id1);
         User user = new User();

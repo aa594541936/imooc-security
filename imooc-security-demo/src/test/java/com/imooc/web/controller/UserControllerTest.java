@@ -38,7 +38,7 @@ public class UserControllerTest {
          *
          *  andExpect：期望请求成功，期望返回的json数据长度为3
          */
-        mockMvc.perform(MockMvcRequestBuilders.get("/user")
+        String result = mockMvc.perform(MockMvcRequestBuilders.get("/user")
                 .param("username", "cjl")
                 .param("age", "18")
                 .param("ageTo", "60")
@@ -48,17 +48,21 @@ public class UserControllerTest {
 //                .param("sort", "age,desc")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(3));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(3))
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("查询结果为：" + result);
     }
 
 
     // 模拟获取用户详情信息的get请求
     @Test
     public void whenGenInfoSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/1")
+        String result = mockMvc.perform(MockMvcRequestBuilders.get("/user/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("tom"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("tom"))
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("用户详情结果为：" + result);
     }
 
     // 模拟获取用户详情信息失败的情况
