@@ -1,6 +1,9 @@
 package com.imooc.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.validator.constraints.NotBlank;
+
+import java.util.Date;
 
 /*
 @JsonView主要作用：
@@ -14,12 +17,17 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class User {
 
     // 1.使用接口来声明多个视图
-    public interface UserSimpleView {};
-    public interface UserDetailView extends UserSimpleView {};
+    public interface UserSimpleView {}
+    public interface UserDetailView extends UserSimpleView {}
+
+    private String id;
 
     private String username;
 
+    @NotBlank
     private String password;
+
+    private Date birthday;
 
     // 2.在值对象的get方法上指定视图
     @JsonView(UserSimpleView.class)
@@ -39,4 +47,23 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @JsonView(UserSimpleView.class)
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @JsonView(UserSimpleView.class)
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
 }
