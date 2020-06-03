@@ -17,8 +17,11 @@ import java.util.Date;
 public class User {
 
     // 1.使用接口来声明多个视图
-    public interface UserSimpleView {}
-    public interface UserDetailView extends UserSimpleView {}
+    public interface UserSimpleView {
+    }
+
+    public interface UserDetailView extends UserSimpleView {
+    }
 
     private String id;
 

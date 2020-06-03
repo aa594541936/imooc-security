@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @RunWith(SpringRunner.class)
@@ -81,7 +83,7 @@ public class UserControllerTest {
         Date date = new Date();
         System.out.println("前台传入的参数：" + date.getTime());
         // 传入Controller的参数是json形式，那么就要在接收参数的那里添加@RequestBody注解
-        String content = "{\"username\":\"tom\", \"password\":null, \"birthday\":"+ date.getTime() +"}";
+        String content = "{\"username\":\"tom\", \"password\":null, \"birthday\":" + date.getTime() + "}";
         String result = mockMvc.perform(MockMvcRequestBuilders.post("/user")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(content))
@@ -89,6 +91,18 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andReturn().getResponse().getContentAsString();
         System.out.println("后台返回的结果：" + result);
+    }
+
+    @Test
+    public void whenUpdateSuccess() throws Exception {
+        Date date = new Date(LocalDateTime.now().plusYears(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        System.out.println("前台传入的参数：" + date.getTime());
+        String content = "{\"username\":\"Jack1\", \"password\":null, \"birthday\":" + date.getTime() + "}";
+        String result = mockMvc.perform(MockMvcRequestBuilders.put("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(content)).andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
     }
 
 }

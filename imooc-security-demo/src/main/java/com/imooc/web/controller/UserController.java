@@ -35,15 +35,29 @@ public class UserController {
         return user;
     }
 
-//    @RequestMapping(value = "/user", method = RequestMethod.GET)
-//    public List<User> query(@RequestParam(name = "username", required = false, defaultValue = "coco") String nickName) {
-//        System.out.println("nickName：" + nickName);
-//        List<User> users = new ArrayList<>();
-//        users.add(new User());
-//        users.add(new User());
-//        users.add(new User());
-//        return users;
-//    }
+    @PutMapping("/{id:\\d+}")
+    public User update(@Valid @RequestBody User user, BindingResult errors) {
+
+        System.out.println(user.getId());
+        System.out.println(user.getUsername());
+        System.out.println(user.getPassword());
+        System.out.println(user.getBirthday());
+
+        user.setId("1");
+        return user;
+    }
+
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public List<User> query(@RequestParam(name = "username", required = false, defaultValue = "coco") String nickName) {
+        System.out.println("nickName：" + nickName);
+        List<User> users = new ArrayList<>();
+        User user = new User();
+        user.setUsername(nickName);
+        users.add(user);
+        users.add(new User());
+        users.add(new User());
+        return users;
+    }
 
     // @PageableDefault(page = 2, size = 17, sort = "username,asc") 如果前台没传值过来，则这就是默认值
     // Pageable是SpringData里的东西
