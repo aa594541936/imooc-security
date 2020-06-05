@@ -1,5 +1,8 @@
 package com.imooc.security.browser;
 
+import com.imooc.security.browser.authentication.ImoocAuthenticationSuccessHandler;
+import com.imooc.security.core.properties.SecurityProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
+
+
+    @Autowired
+    SecurityProperties securityProperties;
+
+    @Autowired
+    ImoocAuthenticationSuccessHandler imoocAuthenticationSuccessHandler;
 
     // 用于加密密码
     // 传入明文密码，返回加密后的密码
@@ -30,7 +40,11 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         http    // 表单登录
                 .formLogin()
                 // 设置登录页面
-                .loginPage("/imooc-signIn.html")
+//                .loginPage("/imooc-signIn.html")
+                .loginPage("/authentication/require")
+                // 设置处理登录请求的url
+                .loginProcessingUrl("/authentication/form")
+                .successHandler(imoocAuthenticationSuccessHandler)
                 // Basic登录
 //                .httpBasic()
                 .and()
@@ -38,10 +52,14 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 所有的请求都需要身份认证后才能进行访问
                 .authorizeRequests()
                 // 登录页面不需要认证就可以访问
-                .antMatchers("/imooc-signIn.html").permitAll()
+//                .antMatchers("/imooc-signIn.html", securityProperties.getBrowser().getLoginPage()).permitAll()
+                .antMatchers("/authentication/require", securityProperties.getBrowser().getLoginPage()).permitAll()
                 // 任何请求
                 .anyRequest()
                 // 都需要身份验证（认证）
-                .authenticated();
+                .authenticated()
+                .and()
+                // 把跨域保护先关闭，SpringSecurity默认是开启的
+                .csrf().disable();
     }
 }
