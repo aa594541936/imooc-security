@@ -10,6 +10,16 @@ public class BrowserProperties {
 
     private String loginPage = SecurityConstants.DEFAULT_LOGIN_PAGE_URL;
 
+    private LoginResponseType loginType = LoginResponseType.JSON;
+
+    public LoginResponseType getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(LoginResponseType loginType) {
+        this.loginType = loginType;
+    }
+
     public String getSignUpUrl() {
         return signUpUrl;
     }

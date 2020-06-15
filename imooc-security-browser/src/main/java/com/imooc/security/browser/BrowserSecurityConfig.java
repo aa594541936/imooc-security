@@ -1,7 +1,9 @@
 package com.imooc.security.browser;
 
+import com.imooc.security.browser.authentication.ImoocAuthenticationFailureHandler;
 import com.imooc.security.browser.authentication.ImoocAuthenticationSuccessHandler;
 import com.imooc.security.core.properties.SecurityProperties;
+import com.imooc.security.core.validate.code.ValidateCodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -19,6 +22,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     ImoocAuthenticationSuccessHandler imoocAuthenticationSuccessHandler;
+
+    @Autowired
+    ImoocAuthenticationFailureHandler imoocAuthenticationFailureHandler;
 
     // 用于加密密码
     // 传入明文密码，返回加密后的密码
@@ -36,8 +42,13 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
+        ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
+        validateCodeFilter.setAuthenticationFailureHandler(imoocAuthenticationFailureHandler);
 
-        http    // 表单登录
+
+
+        http    .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+                // 表单登录
                 .formLogin()
                 // 设置登录页面
 //                .loginPage("/imooc-signIn.html")
@@ -45,6 +56,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 设置处理登录请求的url
                 .loginProcessingUrl("/authentication/form")
                 .successHandler(imoocAuthenticationSuccessHandler)
+                .failureHandler(imoocAuthenticationFailureHandler)
                 // Basic登录
 //                .httpBasic()
                 .and()
@@ -53,7 +65,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // 登录页面不需要认证就可以访问
 //                .antMatchers("/imooc-signIn.html", securityProperties.getBrowser().getLoginPage()).permitAll()
-                .antMatchers("/authentication/require", securityProperties.getBrowser().getLoginPage()).permitAll()
+                .antMatchers("/authentication/require", securityProperties.getBrowser().getLoginPage(), "/code/image").permitAll()
                 // 任何请求
                 .anyRequest()
                 // 都需要身份验证（认证）

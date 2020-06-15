@@ -2,6 +2,8 @@ package com.imooc.security.browser.authentication;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.imooc.security.core.properties.LoginResponseType;
+import com.imooc.security.core.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -19,10 +21,18 @@ public class ImoocAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private SecurityProperties securityProperties;
+
     // Authentication authentication ：封装我们的认证信息
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(authentication));
+        if (LoginResponseType.JSON.equals(securityProperties.getBrowser().getLoginPage())) {
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(objectMapper.writeValueAsString(authentication));
+        } else {
+            super.onAuthenticationSuccess(request, response, authentication);
+        }
+
     }
 }
